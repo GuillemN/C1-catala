@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrenador Oficial C1 Català · Activitats i Proves d'Examen</title>
+  <meta name="description" content="Plataforma interactiva d'activitats de català nivell C1 amb autocorrecció immediata, exàmens oficials d'Andorra, derivació, frases fetes, flexió i transformacions d'oracions.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Capçalera principal -->
+  <header class="site-header">
+    <div class="header-container">
+      <div class="brand-section" id="btn-brand-home" title="Inici">
+        <div class="brand-logo">C1</div>
+        <div class="brand-info">
+          <h1>Entrenador Oficial de Català C1</h1>
+          <p>Govern d'Andorra · Exàmens Oficials i Activitats Pràctiques</p>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <button class="btn-icon" id="btn-toggle-sound" title="Activa / desactiva sons">🔊</button>
+        <button class="btn-icon" id="btn-toggle-theme" title="Canvia mode fosc / clar">🌙</button>
+        <button class="btn-icon" id="btn-reset-stats" title="Reinicia estadístiques">🔄</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Pestanyes de navegació dels modes -->
+  <nav class="nav-tabs-wrapper">
+    <div class="nav-tabs">
+      <button class="nav-tab-btn active" data-tab="practice">
+        <span>🎯</span> Mode Pràctica Lliure
+      </button>
+      <button class="nav-tab-btn" data-tab="exam">
+        <span>⏱️</span> Simulacre d'Examen Oficial
+      </button>
+      <button class="nav-tab-btn" data-tab="review">
+        <span>⚠️</span> Repassar Errors (<span id="errors-tab-count">0</span>)
+      </button>
+      <button class="nav-tab-btn" data-tab="reading">
+        <span>📖</span> Comprensió Lectora
+      </button>
+      <button class="nav-tab-btn" data-tab="writing">
+        <span>✍️</span> Expressió Escrita (55p)
+      </button>
+      <button class="nav-tab-btn" data-tab="sentences">
+        <span>🧩</span> Frases amb Connectors (Ex. 7)
+      </button>
+      <button class="nav-tab-btn" data-tab="oral">
+        <span>🗣️</span> Guia de la Prova Oral (25p)
+      </button>
+      <button class="nav-tab-btn" data-tab="dictionary">
+        <span>💡</span> Diccionari de Frases Fetes
+      </button>
+    </div>
+  </nav>
+
+  <!-- Cinta de progrés i estadístiques globals -->
+  <section class="stats-ribbon">
+    <div class="stats-container">
+      <div class="stats-chips">
+        <div class="stat-chip">
+          <span>Completades:</span>
+          <span class="val" id="stat-completed">0 / 0</span>
+        </div>
+        <div class="stat-chip success-chip">
+          <span>Encerts:</span>
+          <span class="val" id="stat-correct">0</span>
+        </div>
+        <div class="stat-chip danger-chip">
+          <span>Errors:</span>
+          <span class="val" id="stat-wrong">0</span>
+        </div>
+        <div class="stat-chip streak-chip">
+          <span>Ratxa:</span>
+          <span class="val" id="stat-streak">🔥 0</span>
+        </div>
+      </div>
+
+      <div class="progress-track" title="Percentatge global d'encerts">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="global-progress-bar"></div>
+        </div>
+        <span class="progress-pct" id="stat-accuracy">0% èxit</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contingut principal dinàmic -->
+  <main class="app-main">
+
+    <!-- SECCIÓ 1: MODE PRÀCTICA LLIURE -->
+    <div id="view-practice" class="view-panel active">
+      
+      <!-- Banner de benvinguda amb accions ràpides -->
+      <div class="welcome-banner">
+        <div class="banner-content">
+          <h2>Practica i prepara el teu C1 de Català</h2>
+          <p>Fes activitats interactives amb correcció instantània, explicació de la regla gramatical i registre del teu progrés. Practica per temes o fes els exàmens oficials reals!</p>
+        </div>
+        <div class="banner-actions">
+          <button class="btn btn-outline-white" id="btn-quick-exam1">📝 Examen CAT-C1-39</button>
+          <button class="btn btn-outline-white" id="btn-quick-exam2">📄 Nou Model C1</button>
+        </div>
+      </div>
+
+      <!-- Barra de filtres i cerca -->
+      <div class="filter-bar">
+        <div class="category-pills" id="category-pills-container">
+          <!-- Generat dinàmicament des de data.js -->
+        </div>
+
+        <div class="search-box-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" class="search-input" placeholder="Cerca paraules, preguntes...">
+        </div>
+      </div>
+
+      <!-- Disposició a dues columnes: Navegador + Targeta de la pregunta -->
+      <div class="practice-layout">
+        
+        <!-- Barra lateral: Graella de preguntes -->
+        <aside class="navigator-card">
+          <div class="navigator-header">
+            <h3>Preguntes (<span id="filtered-total-count">0</span>)</h3>
+            <span class="navigator-counter" id="current-q-index-display">1 de 0</span>
+          </div>
+
+          <div class="question-grid" id="question-navigator-grid">
+            <!-- Botons numerats 1, 2, 3... generats per JS -->
+          </div>
+
+          <div class="nav-legend">
+            <div class="legend-item"><span class="legend-dot pending"></span> Pendent</div>
+            <div class="legend-item"><span class="legend-dot correct"></span> Encertat</div>
+            <div class="legend-item"><span class="legend-dot wrong"></span> Errat</div>
+          </div>
+        </aside>
+
+        <!-- Àrea central: Targeta interactiva de la pregunta activa -->
+        <section class="question-display-area" id="active-question-container">
+          <!-- Renderitzat per JS -->
+        </section>
+
+      </div>
+    </div>
+
+    <!-- SECCIÓ 2: MODE SIMULACRE D'EXAMEN -->
+    <div id="view-exam" class="view-panel" style="display: none;">
+      <div class="exam-header-bar">
+        <div>
+          <h2 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.2rem;">Simulacre de Prova Oficial C1</h2>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">Bloc: Lèxic, gramàtica i ortografia (20 punts). Nota per aprovar: 14/20 (70%).</p>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+          <select id="exam-select" class="btn btn-secondary" style="font-weight: 600; cursor: pointer;">
+            <option value="exam1">Examen Oficial CAT-C1-39</option>
+            <option value="exam2">Nou Model d'Examen C1</option>
+          </select>
+
+          <div class="timer-box" id="exam-timer-display" title="Temps restant oficial">
+            <span>⏱️</span> <span id="timer-text">65:00</span>
+          </div>
+
+          <button class="btn btn-primary" id="btn-start-or-finish-exam">Comença l'Examen</button>
+        </div>
+      </div>
+
+      <div id="exam-questions-list">
+        <!-- Renderitzat de totes les preguntes de l'examen seleccionat una rere l'altra -->
+      </div>
+
+      <div id="exam-result-summary" style="display: none;">
+        <!-- Resum de qualificació oficial -->
+      </div>
+    </div>
+
+    <!-- SECCIÓ 3: MODE REPASSAR ERRORS -->
+    <div id="view-review" class="view-panel" style="display: none;">
+      <div class="welcome-banner" style="background: linear-gradient(135deg, #b91c1c, #dc2626);">
+        <div class="banner-content">
+          <h2>Zona de Repàs d'Errors</h2>
+          <p>Aquesta secció recull exclusivament les preguntes que heu fallat. Torneu-les a intentar fins que les domineu completament!</p>
+        </div>
+      </div>
+
+      <div id="review-container">
+        <!-- Contingut de preguntes fallades -->
+      </div>
+    </div>
+
+    <!-- SECCIÓ 4: COMPRENSIÓ LECTORA -->
+    <div id="view-reading" class="view-panel" style="display: none;">
+      <div class="reading-layout">
+        <!-- Text complet a l'esquerra -->
+        <article class="reading-text-pane" id="reading-text-article">
+          <!-- Text generat per JS -->
+        </article>
+
+        <!-- Preguntes tipus test a la dreta -->
+        <div class="reading-questions-pane" id="reading-questions-container">
+          <!-- Preguntes de la lectura -->
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓ 5: DICCIONARI DE FRASES FETES -->
+    <div id="view-dictionary" class="view-panel" style="display: none;">
+      <div class="welcome-banner" style="background: linear-gradient(135deg, #047857, #059669);">
+        <div class="banner-content">
+          <h2>Recull de Frases Fetes i Expressions C1</h2>
+          <p>Consulteu els modismes i frases fetes més habituals de les proves de C1 de Llengua Catalana amb el seu significat i exemples.</p>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="search-box-wrapper" style="width: 100%; max-width: 450px;">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="dict-search-input" class="search-input" placeholder="Cerca expressió o significat (ex: bolet, ànec, rave...)">
+        </div>
+      </div>
+
+      <div class="dict-grid" id="dict-cards-grid">
+        <!-- Targetes de modismes -->
+      </div>
+    </div>
+
+    <!-- SECCIÓ 6: EXPRESSIÓ ESCRITA (55 PUNTS) -->
+    <div id="view-writing" class="view-panel" style="display: none;">
+      <div class="welcome-banner" style="background: linear-gradient(135deg, #4338ca, #6366f1);">
+        <div class="banner-content">
+          <h2>Expressió Escrita Oficial C1 (55 punts)</h2>
+          <p>La redacció representa més del 70% de la nota escrita (Part 1: 30 punts + Part 2: 25 punts). Practiqueu les tasques reals dels dos exàmens amb comptador de paraules i redaccions model de referència.</p>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;" id="writing-task-selector">
+        <!-- Botons de tasques generats per JS -->
+      </div>
+
+      <div id="writing-active-task-container">
+        <!-- Contingut de la tasca seleccionada -->
+      </div>
+    </div>
+
+    <!-- SECCIÓ 7: CREACIÓ DE FRASES AMB CONNECTORS (EXERCICI 7) -->
+    <div id="view-sentences" class="view-panel" style="display: none;">
+      <div class="welcome-banner" style="background: linear-gradient(135deg, #0e7490, #06b6d4);">
+        <div class="banner-content">
+          <h2>Exercici 7: Creació de Frases amb Elements Gramaticals (2 punts)</h2>
+          <p>Als dos exàmens oficials us demanen elaborar una frase completa amb connectors i pronoms febles concrets (*encara que*, *l'hi*, *caldria que*, *si hagués vingut*, *tanmateix*...). Practiqueu cadascun d'ells amb regles normatives i frases d'exemple correctes.</p>
+        </div>
+      </div>
+
+      <div id="sentences-grid-container">
+        <!-- Llistat interactiu de frases -->
+      </div>
+    </div>
+
+    <!-- SECCIÓ 8: GUIA DE LA PROVA ORAL (25 PUNTS) -->
+    <div id="view-oral" class="view-panel" style="display: none;">
+      <div class="welcome-banner" style="background: linear-gradient(135deg, #7c3aed, #8b5cf6);">
+        <div class="banner-content">
+          <h2>Guia de Preparació de la Prova Oral C1 (25 punts)</h2>
+          <p>La prova oral és eliminatòria: cal assolir un 70% (mínim 17,5 punts sobre 25). Consulteu l'estructura oficial, els consells per al monòleg i el debat, i els errors típics que resten punts.</p>
+        </div>
+      </div>
+
+      <div id="oral-guide-container">
+        <!-- Guia oficial estructurada -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Peu de pàgina -->
+  <footer class="site-footer">
+    <p><strong>Entrenador Oficial C1 de Català</strong> · Basat en els models i solucionaris oficials del <strong>Govern d'Andorra</strong> (CAT-C1-39 i Nou Model).</p>
+    <p style="margin-top: 0.35rem; font-size: 0.8rem; opacity: 0.8;">Creat per practicar autònomament amb autocorrecció immediata, regles ortogràfiques i criteris del 70% d'aptitud.</p>
+  </footer>
+
+  <!-- Contenidor de notificacions Toast -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
